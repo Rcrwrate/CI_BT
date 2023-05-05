@@ -22,7 +22,7 @@ on:
       Upload_mode:
         description: '上传模式'
         required: true
-        default: 'rclone'
+        default: 'python'
         type: choice
         options:
         - rclone
