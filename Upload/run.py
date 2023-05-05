@@ -13,5 +13,5 @@ parser.add_argument('-p', '--path', type=str,
 args = parser.parse_args()
 
 
-if args.path.startswith("Upload/Pixiv"):
+if args.path.startswith("Upload"):
     main("../image", args.path.replace("\r",""))
