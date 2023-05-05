@@ -46,7 +46,7 @@ jobs:
     - name: Download
       if: inputs.mode == '种子链接'
       run: |
-        curl -LJO "${{ inputs.torrent }}"
+        wget "${{ inputs.torrent }}"
         echo $(basename "${{ inputs.torrent }}") > aria2.session
         bash tracker.sh
         aria2c --conf-path=aria2.conf
