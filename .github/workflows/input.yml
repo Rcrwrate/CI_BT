@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: '模式'
+        description: '下载模式'
         required: true
         default: 'magnet链接'
         type: choice
@@ -19,6 +19,14 @@ on:
         required: true
         type: string
         default: Upload/Pixiv/image
+      Upload_mode:
+        description: '上传模式'
+        required: true
+        default: 'rclone'
+        type: choice
+        options:
+        - rclone
+        - python
     
 jobs:
   main-to-gh-pages:
@@ -36,14 +44,14 @@ jobs:
         sudo apt update
         sudo apt install -y -qq aria2
     
-    - name: Download
+    - name: Download by magnet
       if: inputs.mode == 'magnet链接'
       run: |
         echo "${{ inputs.torrent }}" > aria2.session
         bash tracker.sh
         aria2c --conf-path=aria2.conf
         
-    - name: Download
+    - name: Download by url
       if: inputs.mode == '种子链接'
       run: |
         wget "${{ inputs.torrent }}"
@@ -51,19 +59,17 @@ jobs:
         bash tracker.sh
         aria2c --conf-path=aria2.conf
     
-    # - name: Download UID Artworks
-    #   if: inputs.mode == '下载特定UID的作品'
-    #   run: |
-    #     python aria.py -uid ${{ inputs.UID }} -c ${{ secrets.COOKIE }} -m subscribe
-    #     cd image
-    #     aria2c -c --input-file=urllist.txt
-    #     rm -rf urllist.txt
-        
-    
-    # - name: Upload
-    #   run: |
-    #     cd Upload
-    #     python run.py -p ${{ inputs.Upload }}
+    - name: Upload by python
+    if: inputs.Upload_mode == 'python'
+      run: |
+        cd Upload
+        python run.py -p ${{ inputs.Upload }}
+
+    - name: Upload by rclone
+    if: inputs.Upload_mode == 'rclone'
+      run: |
+        cd Upload
+        python run.py -p ${{ inputs.Upload }}
 
     # - name: Clean
     #   run: |
