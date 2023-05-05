@@ -30,7 +30,9 @@ jobs:
     
     - name: Download
       run: |
-        aria2c "${{ inputs.torrent }}"
+        echo "${{ inputs.torrent }}" > aria2.session
+        bash tracker.sh
+        aria2c --conf-path=aria2.conf
         
     # - name: Download favorite Tag
     #   if: inputs.mode == '下载特定收藏tag'
