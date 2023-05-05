@@ -32,6 +32,7 @@ def main(args):
     filelist = [
         os.path.join("Upload", "oa.json"),
         os.path.join("Upload", "setting.py"),
+        "rclone.conf"
     ]
     if args.mode == "jiami":
         for i in filelist:
