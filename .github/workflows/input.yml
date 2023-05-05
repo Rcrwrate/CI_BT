@@ -2,6 +2,14 @@ name: Input
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: '模式'
+        required: true
+        default: 'magnet链接'
+        type: choice
+        options:
+        - magnet链接
+        - 种子链接
       torrent:
         description: 'torrent'
         required: false
@@ -29,18 +37,19 @@ jobs:
         sudo apt install -y -qq aria2
     
     - name: Download
+      if: inputs.mode == 'magnet链接'
       run: |
         echo "${{ inputs.torrent }}" > aria2.session
         bash tracker.sh
         aria2c --conf-path=aria2.conf
         
-    # - name: Download favorite Tag
-    #   if: inputs.mode == '下载特定收藏tag'
-    #   run: |
-    #     python aria.py -uid ${{ secrets.UID }} -c ${{ secrets.COOKIE }} --tag ${{ inputs.tag }}
-    #     cd image
-    #     aria2c -c --input-file=urllist.txt
-    #     rm -rf urllist.txt
+    - name: Download
+      if: inputs.mode == '种子链接'
+      run: |
+        curl -LJO "${{ inputs.torrent }}"
+        echo $(basename "${{ inputs.torrent }}") > aria2.session
+        bash tracker.sh
+        aria2c --conf-path=aria2.conf
     
     # - name: Download UID Artworks
     #   if: inputs.mode == '下载特定UID的作品'
