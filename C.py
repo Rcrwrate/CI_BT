@@ -13,6 +13,8 @@ parser.add_argument('--public', type=str,
                     dest="public", help='设置public key', default=False)
 parser.add_argument('--mode', type=str,
                     dest="mode", help='加密or解密', default=False)
+parser.add_argument('--type', type=str,
+                    dest="type", help='type', default="python")
 
 
 def load_and_save(path, m: str = ""):

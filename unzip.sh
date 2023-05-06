@@ -16,7 +16,7 @@ do
     then
       unzip -n "$file" -d "$dir/$filename"
     else
-      7z x "$file" -o"$dir/$filename"
+      7z x "$file" -o"$dir/$filename" -y
     fi
   fi
 done
