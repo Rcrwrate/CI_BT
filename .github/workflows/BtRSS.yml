@@ -1,0 +1,69 @@
+name: BT RSS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 */6 * *'
+
+jobs:
+  get-bts:
+    runs-on: ubuntu-latest
+    outputs:
+      bts: ${{ steps.get-bts.outputs.bts }}
+    steps:
+    - name: Get BTs
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python Rss.py
+        bts=$(cat rss.log) 
+        echo "bts=$bts" >> $GITHUB_OUTPUT
+      id: get-bts
+    
+    - name: Push
+      run: |
+        git init
+        git config user.name Rcrwrate
+        git config user.email 46920034+Rcrwrate@users.noreply.github.com
+        git add .
+        git commit -m "BT RSS Data update ${{ github.run_id }}"
+        git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch Data/rss.ini; fi' --prune-empty --tag-name-filter cat -- --all
+        git push
+
+  process-bt:
+    needs: get-bts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bts: ${{ fromJSON(needs.get-bts.outputs.bts) }}
+    steps:
+    - name: checkout main
+      uses: actions/checkout@v2
+      with:
+        ref: main
+    
+    - name: Prepare
+      run: | 
+        sudo apt update
+        sudo apt install -y -qq aria2
+        sudo apt install -y p7zip p7zip-full p7zip-rar
+        pip install pycryptodome
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi
+
+    - name: Download
+      run: |
+        echo "${{ matrix.bts.link }}" > aria2.session
+        bash tracker.sh
+        aria2c --conf-path=aria2.conf
+      
+    - name: unzip
+      run: |
+        bash unzip.sh
+        bash unzip.sh
+        bash unzip.sh
+    
+    - name: Upload by rclone
+      run: |
+        sudo -v ; curl https://rclone.org/install.sh | sudo bash
+        bash rclone.sh -p ${{ matrix.bts.Upload }}

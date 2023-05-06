@@ -65,6 +65,8 @@ jobs:
     - name: unzip
       run: |
         bash unzip.sh
+        bash unzip.sh
+        bash unzip.sh
 
     - name: Upload by python
       if: inputs.Upload_mode == 'python'
@@ -90,7 +92,7 @@ jobs:
         git config user.email 46920034+Rcrwrate@users.noreply.github.com
         git checkout -- Upload/oa.json
         git add .
-        git commit -m "Input update ${{ github.run_id }}"
+        git commit -m "BT update ${{ github.run_id }}"
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch Upload/setting.py; fi' --prune-empty --tag-name-filter cat -- --all
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch rclone.conf; fi' --prune-empty --tag-name-filter cat -- --all
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch dht.dat; fi' --prune-empty --tag-name-filter cat -- --all

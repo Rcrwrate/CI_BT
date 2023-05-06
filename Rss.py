@@ -147,6 +147,19 @@ class Acgnx(RSS):
 
 
 if __name__ == "__main__":
-    a = Acgnx()
-    fin = a.analysis("孤独摇滚")
-    print(fin)
+    a = Acgnx(Network({}, log_level=10))
+    subscribe = ["無神世界的神明活動 ANi baha"]
+    subscribe = {
+        "無神世界的神明活動 ANi baha": "Upload/a"
+    }
+
+    fin = []
+    for i in subscribe:
+        tmp = a.analysis(quote(i))
+        if tmp["items"] != []:
+            for j in tmp["items"]:
+                fin.append(
+                    {"link": j["enclosure"]["link"], "Upload": subscribe[i]})
+
+    with open("rss.log", "w") as f:
+        json.dump(fin, f)
