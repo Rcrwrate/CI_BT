@@ -1,4 +1,4 @@
-name: Input
+name: BT
 on:
   workflow_dispatch:
     inputs:
@@ -43,6 +43,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y -qq aria2
+        sudo apt install -y p7zip p7zip-full p7zip-rar
         pip install pycryptodome
         python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi
     
@@ -61,6 +62,10 @@ jobs:
         bash tracker.sh
         aria2c --conf-path=aria2.conf
     
+    - name: unzip
+      run: |
+        bash unzip.sh
+
     - name: Upload by python
       if: inputs.Upload_mode == 'python'
       run: |
@@ -88,6 +93,5 @@ jobs:
         git commit -m "Input update ${{ github.run_id }}"
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch Upload/setting.py; fi' --prune-empty --tag-name-filter cat -- --all
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch rclone.conf; fi' --prune-empty --tag-name-filter cat -- --all
+        git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch dht.dat; fi' --prune-empty --tag-name-filter cat -- --all
         git push origin --force --all
-
-                
