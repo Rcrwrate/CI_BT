@@ -1,31 +1,26 @@
 #!/bin/bash
 
-# 解压缩函数
-function extract_archive() {
-  local archive="$1"
-  local destination="$2"
-
-  if [[ "$archive" == *.zip ]]; then
-    unzip -n "$archive" -d "$destination"
-  elif [[ "$archive" == *.7z ]]; then
-    7z x "$archive" -o"$destination" -y
-  fi
-}
-
-# 遍历文件夹中的所有文件
-function process_files() {
-  local dir="$1"
-
-  for file in "$dir"/*; do
-    # 如果是压缩包则解压
-    if [[ "$file" == *.zip || "$file" == *.7z ]]; then
-      # 创建目标文件夹
+function traverse_dir {
+  local dir=$1
+  local sub_dir
+  local file
+  for file in "$dir"/*
+  do
+    if [[ -d "$file" ]]
+    then
+      traverse_dir "$file"
+    elif [[ "$file" == *.zip || "$file" == *.7z ]]
+    then
       filename=$(basename "$file" | cut -f 1 -d '.')
-      mkdir "$dir/$filename"
-      # 解压到目标文件夹
-      extract_archive "$file" "$dir/$filename"
-      # 递归处理目标文件夹下的文件
-      process_files "$dir/$filename"
+      mkdir -p "$dir/$filename"
+      if [[ "$file" == *.zip ]]
+      then
+        unzip -o "$file" -d "$dir/$filename"
+        traverse_dir "$dir/$filename"
+      else
+        7z x "$file" -o"$dir/$filename" -y
+        traverse_dir "$dir/$filename"
+      fi
     fi
   done
 }
@@ -33,5 +28,5 @@ function process_files() {
 # 指定要遍历的文件夹
 dir="./image"
 
-# 调用函数处理文件夹中的压缩包
-process_files "$dir"
+# 调用递归函数遍历文件夹中的所有文件并解压压缩包
+traverse_dir "$dir"
