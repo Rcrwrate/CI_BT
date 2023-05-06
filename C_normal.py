@@ -13,6 +13,8 @@ parser.add_argument('--public', type=str,
                     dest="public", help='设置public key', default=False)
 parser.add_argument('--mode', type=str,
                     dest="mode", help='加密or解密', default=False)
+parser.add_argument('--type', type=str,
+                    dest="type", help='type', default="python")
 
 
 def load_and_save(path, m: str = ""):
@@ -29,16 +31,18 @@ def main(args):
     c = CRYRSA()
     # c.create_rsa_key()
 
-    filelist = [
+    filelist = {}
+    filelist["python"] = [
         os.path.join("Upload", "oa.json"),
         os.path.join("Upload", "setting.py"),
-        "rclone.conf"
     ]
+    filelist["rclone"] = ["rclone.conf"]
+
     if args.mode == "jiami":
-        for i in filelist:
+        for i in filelist[args.type]:
             load_and_save(i, c.encrypt_more(load_and_save(i)))
     elif args.mode == "jiemi":
-        for i in filelist:
+        for i in filelist[args.type]:
             load_and_save(i, c.decrypt_more(load_and_save(i)))
     elif args.mode == "create":
         c.create_rsa_key()

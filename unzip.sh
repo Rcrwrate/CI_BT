@@ -14,7 +14,7 @@ do
     mkdir "$dir/$filename"
     if [[ "$file" == *.zip ]]
     then
-      unzip "$file" -d "$dir/$filename"
+      unzip -n "$file" -d "$dir/$filename"
     else
       7z x "$file" -o"$dir/$filename"
     fi

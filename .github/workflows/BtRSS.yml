@@ -55,7 +55,7 @@ jobs:
         sudo apt install -y -qq aria2
         sudo apt install -y p7zip p7zip-full p7zip-rar
         pip install pycryptodome
-        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi --type rclone
 
     - name: Download
       run: |

@@ -45,7 +45,6 @@ jobs:
         sudo apt install -y -qq aria2
         sudo apt install -y p7zip p7zip-full p7zip-rar
         pip install pycryptodome
-        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi
     
     - name: Download by magnet
       if: inputs.mode == 'magnet链接'
@@ -71,19 +70,23 @@ jobs:
     - name: Upload by python
       if: inputs.Upload_mode == 'python'
       run: |
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi --type python
         cd Upload
         python run.py -p ${{ inputs.Upload }}
+        cd ../
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiami --type python
 
     - name: Upload by rclone
       if: inputs.Upload_mode == 'rclone'
       run: |
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiemi --type rclone
         sudo -v ; curl https://rclone.org/install.sh | sudo bash
         bash rclone.sh -p ${{ inputs.Upload }}
+        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiami --type rclone
 
     - name: Clean
       run: |
         rm -rf image
-        python C.py --public "${{ secrets.PUBLIC }}" --private "${{ secrets.PRIVATE }}" --mode jiami
 
     - name: Push
       run: |
