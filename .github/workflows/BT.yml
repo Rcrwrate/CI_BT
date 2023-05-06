@@ -94,4 +94,5 @@ jobs:
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch Upload/setting.py; fi' --prune-empty --tag-name-filter cat -- --all
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch rclone.conf; fi' --prune-empty --tag-name-filter cat -- --all
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch dht.dat; fi' --prune-empty --tag-name-filter cat -- --all
+        git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch aria2.conf; fi' --prune-empty --tag-name-filter cat -- --all
         git push origin --force --all
