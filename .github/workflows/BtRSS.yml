@@ -11,6 +11,12 @@ jobs:
     outputs:
       bts: ${{ steps.get-bts.outputs.bts }}
     steps:
+    - name: checkout main
+      uses: actions/checkout@v2
+      with:
+        ref: main
+        fetch-depth: full
+
     - name: Get BTs
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +34,7 @@ jobs:
         git add .
         git commit -m "BT RSS Data update ${{ github.run_id }}"
         git filter-branch --force --index-filter 'if [ "$GIT_COMMIT" != "$(git rev-parse HEAD)" ]; then git rm --cached --ignore-unmatch Data/rss.ini; fi' --prune-empty --tag-name-filter cat -- --all
-        git push
+        git push origin --force --all
 
   process-bt:
     needs: get-bts
